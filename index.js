@@ -196,7 +196,9 @@ const start = async (listIndex, tmpPageNum) => {
         res = null;
         // return start(listIndex + 1);
         // heapdump.writeSnapshot('/Users/zhuoqunshan/www/personal/spider_mt/mem/' + cityId + '.heapsnapshot');
-        return start(listIndex + 1);
+        setTimeout(() => {
+            start(listIndex + 1);
+        }, 1000 * 10);
     } catch (e) {
         res = null;
         console.error(e);
@@ -212,9 +214,9 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 try {
-    const lastCity = 'tengzhou';
+    const lastCity = 'xinzheng';
     const index = cityList.indexOf(lastCity) === -1 ? 0 : cityList.indexOf(lastCity);
-    const tmpPageNum = 14;
+    const tmpPageNum = 18;
     start(index, tmpPageNum);
 } catch (e) {
     console.error('process error: ', e);
