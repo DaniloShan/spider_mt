@@ -214,9 +214,9 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 try {
-    const lastCity = 'xinzheng';
+    const lastCity = 'xiangxi';
     const index = cityList.indexOf(lastCity) === -1 ? 0 : cityList.indexOf(lastCity);
-    const tmpPageNum = 18;
+    const tmpPageNum = 66;
     start(index, tmpPageNum);
 } catch (e) {
     console.error('process error: ', e);
