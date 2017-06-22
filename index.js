@@ -98,17 +98,14 @@ const getHotelList = async (url) => {
                         $ = null;
                         return resolve([]);
                     }
-                    console.log('hotel list got.');
                     hotelDataList = [];
                     for (let i = 0, il = hotelList.length; i < il; i++) {
                         const item = hotelList[i];
                         const url = $(item).attr('href');
-                        console.log('i in for loop', i);
                         if (url) {
                             try {
                                 const result = await getHotelData(url);
                                 if (!result.error) {
-                                    console.log('hotel data got.', result.title);
                                     hotelDataList.push(result);
                                 }
                             } catch (_e) {
@@ -132,9 +129,7 @@ const pageWalker = async (cityId, pageNum) => {
     const url = getPageUrl(cityId, pageNum);
     let hotelDataList = null;
     try {
-        console.log(new Date(), cityId, 'page ', pageNum, 'start');
         hotelDataList = await getHotelList(url);
-        console.log(new Date(), cityId, 'page ', pageNum, 'end');
         if (!hotelDataList || !hotelDataList.length) {
             isDone = true;
             return;
@@ -149,7 +144,7 @@ const pageWalker = async (cityId, pageNum) => {
     } catch (e) {
         console.error(e);
         hotelDataList = null;
-        if (+e.status === 404) {
+        if (e && +e.status === 404) {
             isDone = true;
         }
     }
@@ -181,6 +176,7 @@ const start = async (listIndex, tmpPageNum) => {
         console.log('========================');
         return new Promise(resolve => resolve());
     }
+    cityObj.lastCity = cityId;
     console.log('========================');
     console.log('start ', cityId, isDone);
     console.log('========================');
@@ -196,8 +192,9 @@ const start = async (listIndex, tmpPageNum) => {
         res = null;
         // return start(listIndex + 1);
         // heapdump.writeSnapshot('/Users/zhuoqunshan/www/personal/spider_mt/mem/' + cityId + '.heapsnapshot');
+        cityObj.tmpPageNum = listIndex + 1;
         setTimeout(() => {
-            start(listIndex + 1);
+            start(cityObj.tmpPageNum);
         }, 1000 * 10);
     } catch (e) {
         res = null;
@@ -213,11 +210,18 @@ process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at:', p, 'reason:', reason);
 });
 
+const cityObj = {
+    lastCity: 'yongzhou',
+    tmpPageNum: 15
+};
+
+setInterval(() => {
+    console.log('interval');
+}, 1000 * 30);
+
 try {
-    const lastCity = 'xiangxi';
-    const index = cityList.indexOf(lastCity) === -1 ? 0 : cityList.indexOf(lastCity);
-    const tmpPageNum = 66;
-    start(index, tmpPageNum);
+    const index = cityList.indexOf(cityObj.lastCity) === -1 ? 0 : cityList.indexOf(cityObj.lastCity);
+    start(index, cityObj.tmpPageNum);
 } catch (e) {
     console.error('process error: ', e);
 }
