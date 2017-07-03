@@ -19,7 +19,12 @@ const getHotelData = async (url) => {
     uaCount += 1;
     // const { err, res } = await request.get(url).set({ 'Referer': url, 'User-Agent': getUa() });
     return new Promise((resolve, reject) => {
-        request.get(url).set({ 'Referer': url, 'User-Agent': getUa() })
+        request.get(url).set({
+            'Referer': url,
+            'suid': Math.floor(10000000000 * Math.random()),
+            'uuid': Math.floor(10000000000 * Math.random()),
+            'User-Agent': getUa()
+        })
             .end(async (err, res) => {
                 let $ = null;
                 let title = null;
@@ -104,6 +109,7 @@ const getHotelList = async (url) => {
                         const url = $(item).attr('href');
                         if (url) {
                             try {
+                                console.log('hotel data ', i);
                                 const result = await getHotelData(url);
                                 if (!result.error) {
                                     hotelDataList.push(result);
@@ -142,10 +148,11 @@ const pageWalker = async (cityId, pageNum) => {
         hotelDataList = null;
         console.log('done ', pageNum);
     } catch (e) {
-        console.error(e);
         hotelDataList = null;
         if (e && +e.status === 404) {
             isDone = true;
+        } else {
+            console.error(e);
         }
     }
 };
@@ -195,7 +202,7 @@ const start = async (listIndex, tmpPageNum) => {
         cityObj.tmpPageNum = listIndex + 1;
         setTimeout(() => {
             start(cityObj.tmpPageNum);
-        }, 1000 * 10);
+        }, 1000 * 3);
     } catch (e) {
         res = null;
         console.error(e);
@@ -211,13 +218,9 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 const cityObj = {
-    lastCity: 'yongzhou',
-    tmpPageNum: 15
+    lastCity: 'sanx',
+    tmpPageNum: 1
 };
-
-setInterval(() => {
-    console.log('interval');
-}, 1000 * 30);
 
 try {
     const index = cityList.indexOf(cityObj.lastCity) === -1 ? 0 : cityList.indexOf(cityObj.lastCity);

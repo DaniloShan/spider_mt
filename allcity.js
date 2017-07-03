@@ -1,4 +1,4 @@
-const allCity = {
+module.exports = {
     "data": [
         {
             "id": 1,
@@ -8706,5 +8706,3 @@ const allCity = {
             "rank": "Z"
         }]
 };
-
-export default allCity;
